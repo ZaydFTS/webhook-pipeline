@@ -4,12 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev:api": "ts-node-dev --respawn --transpile-only src/index.ts",
     "dev:worker": "ts-node-dev --respawn --transpile-only src/worker/worker.ts",
     "build": "tsc",
     "start:api": "node dist/index.js",
-    "start:worker": "node dist/worker/worker.js"
+    "start:worker": "node dist/worker/worker.js",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "repository": {
     "type": "git",
@@ -29,14 +33,17 @@
     "@types/pg": "^8.18.0",
     "@types/uuid": "^10.0.0",
     "@vitest/coverage-v8": "^4.1.0",
+    "drizzle-kit": "^0.31.9",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0"
   },
   "dependencies": {
     "dotenv": "^17.3.1",
+    "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
     "pg": "^8.20.0",
+    "sequelize": "^6.37.8",
     "uuid": "^13.0.0",
     "zod": "^4.3.6"
   }
