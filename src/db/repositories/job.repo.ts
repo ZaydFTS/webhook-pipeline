@@ -32,11 +32,6 @@ export const jobRepo = {
             .returning()
         return job
     },
-    // claimNextJob: async (pipelineId: string) => {
-
-    // }
-
-
     markCompleted: async (id: string, result: Record<string, unknown>) => {
         const [job] = await db
             .update(jobs)
@@ -56,5 +51,5 @@ export const jobRepo = {
             .where(eq(jobs.id, id))
             .returning()
         return job;
-    }
+    },
 }

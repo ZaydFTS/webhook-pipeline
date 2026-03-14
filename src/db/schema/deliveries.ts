@@ -1,7 +1,6 @@
 import { pgTable, uuid, text, integer, timestamp, pgEnum } from 'drizzle-orm/pg-core';
 import { jobs } from './jobs';
 import { subscribers } from './pipelines';
-import { success } from 'zod';
 
 
 

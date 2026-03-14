@@ -13,7 +13,7 @@ import { uuidv4 } from 'zod';
 
 
 
-export const pipelineServiceRepo = {
+export const pipelineRepo = {
 
     findAll: async () => {
         return await db.select().from(pipelines);
@@ -84,9 +84,11 @@ export const pipelineServiceRepo = {
     },
 
     findSubscribers: async (pipelineId: string) => {
-        const result = await db.select()
+        const result = await db
+            .select()
             .from(subscribers)
             .where(eq(subscribers.pipelineId, pipelineId));
         return result;
-    },
+
+    }
 }
