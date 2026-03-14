@@ -3,13 +3,20 @@
 
 import express from "express";
 import pipelineRouter from "./routes/pipelines.routes";
+import authRouter from "./routes/auth.routes";
+import { authenticate } from "./middlewares/authenticate";
 
 
 
 const app = express();
 
 app.use(express.json());
-app.use('/api/pipelines', pipelineRouter)
+app.use('/auth', authRouter);
+
+
+
+app.use('/api/pipelines', authenticate, pipelineRouter)
+
 
 
 

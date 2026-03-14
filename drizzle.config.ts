@@ -7,6 +7,7 @@ export default defineConfig({
     './src/db/schema/pipelines.ts',
     './src/db/schema/jobs.ts',
     './src/db/schema/deliveries.ts',
+    './src/db/schema/users.ts',
   ],
   out:     './src/db/migrations',
   dialect: 'postgresql',
