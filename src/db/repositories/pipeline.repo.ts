@@ -6,7 +6,7 @@ import { db } from '../index';
 
 import { pipelines, subscribers } from '../schema/pipelines';
 import { CreatePipelineDto } from '../../types/pipeline.types';
-import { uuidv4 } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 
 
 
@@ -38,7 +38,7 @@ export const pipelineRepo = {
     },
 
     create: async (dto: CreatePipelineDto) => {
-        const sourceUrl = `/weebhook/${uuidv4()}`;
+        const sourceUrl = `/webhook/${uuidv4()}`;
         const [pipeline] = await db
             .insert(pipelines)
             .values({

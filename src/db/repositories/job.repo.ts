@@ -1,3 +1,4 @@
+import { Job } from "@/types/job.types"
 import { db } from ".."
 import { jobs } from "../schema/jobs"
 import { desc, eq } from 'drizzle-orm'
@@ -31,6 +32,41 @@ export const jobRepo = {
             .values({ payload, pipelineId })
             .returning()
         return job
+    },
+    claimNextJob: async (): Promise<Job | null> => {
+        const result = await db.execute(sql`
+      UPDATE jobs
+      SET
+        status     = 'processing',
+        started_at = NOW(),
+        attempts   = attempts + 1
+      WHERE id = (
+        SELECT id FROM jobs
+        WHERE  status = 'pending'
+        ORDER  BY created_at ASC
+        LIMIT  1
+        FOR UPDATE SKIP LOCKED
+      )
+      RETURNING *
+    `);
+
+        if (result.rows.length === 0) return null;
+
+        // Map snake_case DB columns → camelCase Job type
+        const row = result.rows[0] as Record<string, unknown>;
+        return {
+            id: row.id,
+            pipelineId: row.pipeline_id,
+            status: row.status,
+            payload: row.payload,
+            result: row.result ?? null,
+            error: row.error ?? null,
+            attempts: row.attempts,
+            maxAttempts: row.max_attempts,
+            startedAt: row.started_at ? new Date(row.started_at as string) : null,
+            completedAt: row.completed_at ? new Date(row.completed_at as string) : null,
+            createdAt: new Date(row.created_at as string),
+        } as Job;
     },
     markCompleted: async (id: string, result: Record<string, unknown>) => {
         const [job] = await db

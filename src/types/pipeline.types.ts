@@ -1,16 +1,16 @@
 export type ActionType =
     | 'filter_data'
     | 'transform_format'
-    | 'validate_data'
+    | 'http_enrich'
 
 
 
 export interface CreatePipelineDto {
     name: string;
-    description?: string;                        // optional
+    description?: string;                       
     actionType: ActionType;
-    actionConfig?: Record<string, unknown>;       // optional, defaults to {}
-    subscriberUrls: string[];                      // at least 1 destination URL
+    actionConfig?: Record<string, unknown>;    
+    subscriberUrls: string[];                
 }
 
 

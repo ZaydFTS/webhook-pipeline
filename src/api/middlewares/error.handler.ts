@@ -20,5 +20,8 @@ export const errorHandler = (
     if (err.message === 'Pipeline not found') {
         return res.status(404).json({ message: err.message });
     }
+    if (err.message === 'Pipeline is inactive') {
+        return res.status(400).json({ message: err.message });
+    }
     return res.status(500).json({ message: 'Internal server error' });
 }
