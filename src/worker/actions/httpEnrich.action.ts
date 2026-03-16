@@ -25,4 +25,7 @@ export const httpEnrichAction = async (
     if (!response.ok) {
         throw new Error(`HTTP request failed with status ${response.status}`);
     }
+
+    const data = await response.json();
+    return { ...payload, [config.megeKey]: data };
 }

@@ -1,5 +1,5 @@
 import { actionMap } from "./actions";
-import { pipelineRepo } from "@/db/repositories/pipeline.repo";
+import { pipelineRepo } from "../db/repositories/pipeline.repo";
 import { jobRepo } from "../db/repositories/job.repo";
 import { Job } from "../types/job.types";
 

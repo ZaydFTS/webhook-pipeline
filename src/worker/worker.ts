@@ -1,4 +1,4 @@
-import { jobRepo } from "@/db/repositories/job.repo";
+import { jobRepo } from "../db/repositories/job.repo";
 import { processJob } from "./processor";
 
 
