@@ -7,6 +7,8 @@ export const errorHandler = (
     _next: NextFunction
 ) => {
     console.error(err.message);
+    console.error('Full error:', err);  // ← add this line
+    console.error('Error cause:', err.cause);  // ← and this
 
     if (err.name === 'ZodError') {
         return res.status(400).json({ message: 'Validation error', errors: err.errors });
