@@ -7,6 +7,7 @@ import authRouter from "./routes/auth.routes";
 import { authenticate } from "./middlewares/authenticate";
 import webhookRouter from "./routes/webhooks.routes";
 import { errorHandler } from "./middlewares/error.handler";
+import jobRouter from "./routes/job.routes";
 
 
 
@@ -19,9 +20,13 @@ app.use(express.json());
 
 app.use('/auth', authRouter);
 
+
 app.use('/api/pipelines', authenticate, pipelineRouter)
+app.use('/api/jobs', authenticate, jobRouter);
 
 app.use('/webhooks', webhookRouter);
+
+
 
 
 
