@@ -1,7 +1,9 @@
 import { deliveryRepo } from "../db/repositories/delivery.repo";
 import { pipelineRepo } from "../db/repositories/pipeline.repo";
-
-
+import { jobRepo } from "../db/repositories/job.repo";
+import { db } from '../db';
+import { subscribers } from '../db/schema/pipelines';
+import { eq } from 'drizzle-orm';
 
 
 
@@ -58,18 +60,12 @@ const retryDelivery = async (attempt: any): Promise<void> => {
     }
 
     // Re-fetch the result from the job
-    const { jobRepo } = await import('@/db/repositories/job.repo');
     const job = await jobRepo.findById(attempt.jobId);
 
     if (!job || !job.result) {
         console.log(`Job ${attempt.jobId} not found or has no result`);
         return;
     }
-
-    // Get subscriber URL
-    const { db } = await import('@/db');
-    const { subscribers } = await import('@/db/schema/pipelines');
-    const { eq } = await import('drizzle-orm');
 
     const subResult = await db
         .select()
@@ -126,7 +122,7 @@ const deliverToSubscriber = async (
         if (nextRetryAt !== null) {
             await deliveryRepo.markFailed(attempt.id, error, nextRetryAt);
         } else {
-            console.log(`No more retries left for delivery ${attempt.id}`); 
+            console.log(`No more retries left for delivery ${attempt.id}`);
         }
 
         if (nextRetryAt) {
