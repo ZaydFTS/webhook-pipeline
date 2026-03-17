@@ -1,11 +1,11 @@
-import { eq } from 'drizzle-orm';
-import { db } from '@/db';
-import { deliveryAttempts } from '@/db/schema/deliveries';
+import { eq, and, lte } from 'drizzle-orm';
+import { db } from '../../db';
+import { deliveryAttempts } from '../../db/schema/deliveries';
 
 
 
 
-export const delivertRepo = {
+export const deliveryRepo = {
 
     findByJobId: async (jobId: string) => {
         return await db
@@ -56,5 +56,16 @@ export const delivertRepo = {
             .where(eq(deliveryAttempts.id, id))
             .returning()
         return attept
-    }
+    },
+    findPendingRetries: async () => {
+        return await db
+            .select()
+            .from(deliveryAttempts)
+            .where(
+                and(
+                    eq(deliveryAttempts.status, 'failed'),
+                    lte(deliveryAttempts.nextRetryAt, new Date())
+                )
+            );
+    },
 }
