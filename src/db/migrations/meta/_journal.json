@@ -8,6 +8,20 @@
       "when": 1773498169676,
       "tag": "0000_chunky_sandman",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773513601351,
+      "tag": "0001_demonic_mesmero",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773670941147,
+      "tag": "0002_busy_psynapse",
+      "breakpoints": true
     }
   ]
 }

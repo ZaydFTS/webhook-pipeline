@@ -13,7 +13,8 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,9 @@
   },
   "homepage": "https://github.com/ZaydFTS/webhook-pipeline#readme",
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.5.0",
     "@types/pg": "^8.18.0",
     "@types/uuid": "^10.0.0",
@@ -39,9 +42,11 @@
     "vitest": "^4.1.0"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "pg": "^8.20.0",
     "sequelize": "^6.37.8",
     "uuid": "^13.0.0",

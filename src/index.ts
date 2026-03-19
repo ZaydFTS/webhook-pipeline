@@ -5,9 +5,6 @@ import { config } from "./config";
 
 
 
-
-
-
 const PORT = config.port;
 
 app.listen(PORT, () => {

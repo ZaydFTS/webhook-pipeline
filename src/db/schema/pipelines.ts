@@ -8,7 +8,7 @@ import { jsonb, pgEnum, timestamp, pgTable, uuid, varchar, boolean, text } from 
 export const actionTypeEnum = pgEnum("action_type", [
     'filter_data',
     'transform_format',
-    'validate_data',
+    'http_enrich',
 ]);
 
 
