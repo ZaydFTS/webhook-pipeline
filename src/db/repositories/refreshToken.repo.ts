@@ -35,6 +35,8 @@ export const refreshTokenRepo = {
             .delete(refreshTokens)
             .where(eq(refreshTokens.token, token));
     },
+
+    //for logut all sessions ( form all devices)
     deleteAllForUser: async (userId: string) => {
         await db.delete(refreshTokens)
             .where(eq(refreshTokens.userId, userId));
