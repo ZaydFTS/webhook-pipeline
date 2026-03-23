@@ -13,6 +13,10 @@ const options: swaggerJsdoc.Options = {
                 url: 'http://localhost:3000',
                 description: 'Development server',
             },
+            {
+                url: 'https://webhook-pipeline-api-1081146199416.us-central1.run.app/',
+                description: 'Production server',
+            }
         ],
         components: {
             securitySchemes: {

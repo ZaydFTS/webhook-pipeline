@@ -34,29 +34,29 @@ const authRouter = Router();
  */
 authRouter.post('/register', authController.register);
 
-/** 
+/**
  * @swagger
- * /auth/login
- *  post:
- *  summary: Login a user
- *  tags:[auth]
- *  security: []
- *  requestBody:
- *     required:true
- *     content: 
- *       application/json:
- *          schema:
+ * /auth/login:
+ *   post:
+ *     summary: Login with email and password
+ *     tags: [Auth]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
  *             $ref: '#/components/schemas/LoginDto'
- *  responses:
+ *     responses:
  *       200:
- *          description: Login successful
- *          content:
- *               application/json:
- *                 schema:
- *                      $ref: '#/components/schemas/AuthResponse'
- *         401:
- *           description: Invalid credentials
-*/
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthResponse'
+ *       401:
+ *         description: Invalid credentials
+ */
 authRouter.post('/login', authController.login);
 
 
