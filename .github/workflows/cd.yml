@@ -67,8 +67,9 @@ jobs:
             - name: Authenticate to Google Cloud
               uses: google-github-actions/auth@v2
               with:
-                  credentials_json: ${{ secrets.GCP_SA_KEY }}
-
+                workload_identity_provider: projects/1081146199416/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+                service_account: github-actions@webhook-pipeline-prod-491111.iam.gserviceaccount.com
+          
             - name: Set up Cloud SDK
               uses: google-github-actions/setup-gcloud@v2
 
