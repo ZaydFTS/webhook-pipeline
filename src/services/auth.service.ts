@@ -7,6 +7,7 @@ import { JwtPayload } from "../types/auth.types";
 import jwt from 'jsonwebtoken';
 import type { SignOptions } from 'jsonwebtoken';
 import { config } from "../config";
+import { refreshTokenRepo } from '../db/repositories/refreshToken.repo';
 
 
 const SALT_ROUNDS = 10;
@@ -23,11 +24,8 @@ export const authService = {
         const hashedPassword = await bcrypt.hash(dto.password, SALT_ROUNDS);
 
         const user = await userRepo.create(dto.email, hashedPassword);
-        const token = generateToken({ userId: user.id, email: user.email });
-        return {
-            token,
-            user: { id: user.id, email: user.email },
-        };
+        return await generateToken({ userId: user.id, email: user.email });
+
     },
     login: async (dto: LoginDto) => {
         const user = await userRepo.findByEmail(dto.email);
@@ -36,25 +34,50 @@ export const authService = {
         const isValid = await bcrypt.compare(dto.password, user.password);
         if (!isValid) throw new Error('Invalid credentials');
 
-        const token = generateToken({ userId: user.id, email: user.email });
+        return await generateToken({ userId: user.id, email: user.email });
 
-        return {
-            token,
-            user: { id: user.id, email: user.email },
+
+    },
+    refresh: async (token: string) => {
+        const stored = await refreshTokenRepo.findByToken(token);
+        if (!stored) throw new Error('Invalid refresh token');
+
+        if (new Date() > stored.expiresAt) {
+            await refreshTokenRepo.deleteByToken(token);
+            throw new Error('Refresh token expired');
         }
-    }
+        const user = await userRepo.findById(stored.userId);
+        if (!user) throw new Error('User not found');
+
+        await refreshTokenRepo.deleteByToken(token);
+        return await generateToken({ userId: user.id, email: user.email });
+    },
+    logout: async (token: string) => {
+        await refreshTokenRepo.deleteByToken(token);
+    },
 }
 
 
 
 
-const generateToken = (payload: JwtPayload): string => {
+const generateToken = async (payload: JwtPayload) => {
     const signOptions: SignOptions = {
         expiresIn: config.jwtExpiresIn as SignOptions['expiresIn'],
     };
-    return jwt.sign(payload, config.jwtSecret, {
+    const accessToken = jwt.sign(payload, config.jwtSecret, {
         ...signOptions,
     });
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+
+    const refreshToken = await refreshTokenRepo
+        .create(payload.userId, expiresAt);
+    return {
+        accessToken,
+        refreshToken: refreshToken.token,
+        user: { id: payload.userId, email: payload.email },
+    }
 };
 
 

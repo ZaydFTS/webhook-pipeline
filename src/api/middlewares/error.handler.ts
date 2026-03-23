@@ -25,5 +25,11 @@ export const errorHandler = (
     if (err.message === 'Pipeline is inactive') {
         return res.status(400).json({ message: err.message });
     }
+    if (err.message === 'Invalid refresh token') {
+        return res.status(401).json({ message: err.message });
+    }
+    if (err.message === 'Refresh token expired') {
+        return res.status(401).json({ message: err.message });
+    }
     return res.status(500).json({ message: 'Internal server error' });
 }

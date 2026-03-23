@@ -1,0 +1,108 @@
+name: CI/CD
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    test:
+        name: Test
+        runs-on: ubuntu-latest
+
+        services:
+            postgres:
+                image: postgres:15-alpine
+                env:
+                    POSTGRES_USER: testuser
+                    POSTGRES_PASSWORD: testpass
+                    POSTGRES_DB: testdb
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 5s
+                    --health-timeout 5s
+                    --health-retries 5
+
+        env:
+            DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
+            JWT_SECRET: test_secret_key
+            JWT_EXPIRES_IN: 15m
+            NODE_ENV: test
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Type check
+              run: npx tsc --noEmit
+
+            - name: Run migrations
+              run: npm run db:push
+
+            - name: Run tests
+              run: npm run test:run
+
+            - name: Build
+              run: npm run build
+
+    deploy:
+        name: Deploy
+        runs-on: ubuntu-latest
+        needs: test # only deploy if tests pass
+        if: github.ref == 'refs/heads/main' # only on main branch
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Authenticate to Google Cloud
+              uses: google-github-actions/auth@v2
+              with:
+                  credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+            - name: Set up Cloud SDK
+              uses: google-github-actions/setup-gcloud@v2
+
+            - name: Configure Docker
+              run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+            - name: Build and push API image
+              run: |
+                  docker build -f docker/Dockerfile.api \
+                    -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/webhook-pipeline/api:${{ github.sha }} \
+                    -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/webhook-pipeline/api:latest .
+                  docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/webhook-pipeline/api:${{ github.sha }}
+                  docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/webhook-pipeline/api:latest
+
+            - name: Build and push Worker image
+              run: |
+                  docker build -f docker/Dockerfile.worker \
+                    -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/webhook-pipeline/worker:${{ github.sha }} \
+                    -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/webhook-pipeline/worker:latest .
+                  docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/webhook-pipeline/worker:${{ github.sha }}
+                  docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/webhook-pipeline/worker:latest
+
+            - name: Deploy API to Cloud Run
+              run: |
+                  gcloud run deploy webhook-pipeline-api \
+                    --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/webhook-pipeline/api:${{ github.sha }} \
+                    --platform managed \
+                    --region us-central1 \
+                    --allow-unauthenticated
+
+            - name: Deploy Worker to Cloud Run
+              run: |
+                  gcloud run deploy webhook-pipeline-worker \
+                    --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/webhook-pipeline/worker:${{ github.sha }} \
+                    --platform managed \
+                    --region us-central1 \
+                    --min-instances=1
