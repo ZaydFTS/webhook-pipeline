@@ -9,6 +9,7 @@ export const actionTypeEnum = pgEnum("action_type", [
     'filter_data',
     'transform_format',
     'http_enrich',
+    'Json_XML_convert',
 ]);
 
 
