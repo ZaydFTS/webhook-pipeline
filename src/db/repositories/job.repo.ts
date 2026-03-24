@@ -1,4 +1,4 @@
-import { Job } from "@/types/job.types"
+import { Job } from "../../types/job.types"
 import { db } from ".."
 import { jobs } from "../schema/jobs"
 import { desc, eq, sql } from 'drizzle-orm'

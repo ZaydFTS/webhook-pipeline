@@ -2,15 +2,16 @@ export type ActionType =
     | 'filter_data'
     | 'transform_format'
     | 'http_enrich'
+    | 'Json_XML_convert'
 
 
 
 export interface CreatePipelineDto {
     name: string;
-    description?: string;                       
+    description?: string;
     actionType: ActionType;
-    actionConfig?: Record<string, unknown>;    
-    subscriberUrls: string[];                
+    actionConfig?: Record<string, unknown>;
+    subscriberUrls: string[];
 }
 
 

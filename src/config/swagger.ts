@@ -67,7 +67,7 @@ const options: swaggerJsdoc.Options = {
                         description: { type: 'string', example: 'Optional description' },
                         actionType: {
                             type: 'string',
-                            enum: ['filter_fields', 'transform_format', 'http_enrich'],
+                            enum: ['filter_data', 'transform_format', 'http_enrich', 'Json_XML_convert'],
                         },
                         actionConfig: {
                             type: 'object',
