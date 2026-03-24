@@ -7,16 +7,16 @@ const POLL_INTERVAL_MS = 5000;
 const RETRY_INTERVAL_MS = 60000;
 // ── Add comment for 
 // ── Minimal HTTP server for Cloud Run health checks ────────
-// const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;
 
-// const server = http.createServer((_req, res) => {
-//     res.writeHead(200);
-//     res.end('Worker is running');
-// });
+const server = http.createServer((_req, res) => {
+    res.writeHead(200);
+    res.end('Worker is running');
+});
 
-// server.listen(PORT, () => {
-//     console.log(`Worker health check listening on port ${PORT}`);
-// });
+server.listen(PORT, () => {
+    console.log(`Worker health check listening on port ${PORT}`);
+});
 
 // ── Main polling loop ──────────────────────────────────────
 const runWorker = async (): Promise<void> => {
