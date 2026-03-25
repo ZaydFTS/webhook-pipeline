@@ -15,7 +15,16 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
+  migrate:
+    build: 
+      context: .
+      dockerfile: src/docker/dockerFile.migrate
+    command: npm run db:push
+    depends_on:
+     postgres:
+      condition: service_healthy
+    env_file:
+    - .env.docker
   api: 
     build: 
       context: .
@@ -41,6 +50,8 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       NODE_ENV : production
     depends_on:
+      migrate:
+       condition: service_completed_successfully
       postgres:
         condition: service_healthy
       api:                        

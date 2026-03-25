@@ -3,7 +3,7 @@ import { jobRepo } from '../db/repositories/job.repo';
 import { processJob } from './processor';
 import { deliveryService } from '../services/delivery.service';
 
-const POLL_INTERVAL_MS = 5000;
+const POLL_INTERVAL_MS = 3000;
 const RETRY_INTERVAL_MS = 60000;
 // ── Add comment for 
 // ── Minimal HTTP server for Cloud Run health checks ────────
